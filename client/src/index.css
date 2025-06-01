@@ -40,19 +40,19 @@ body {
 
 /* Scrollbar Handle */
 ::-webkit-scrollbar-thumb {
-  background: #aa0262;
+  background: #F29E23;
   border-radius: 10px;
 }
 
 /* Scrollbar Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #aa0262;
+  background: #F29E23;
 }
 
 .about-card {
-  -webkit-box-shadow: 36px 35px 0px 8px #aa0262;
-  -moz-box-shadow: 36px 35px 0px 8px #aa0262;
-  box-shadow: 36px 35px 0px 8px #aa0262;
+  -webkit-box-shadow: 36px 35px 0px 8px #F29E23;
+  -moz-box-shadow: 36px 35px 0px 8px #F29E23;
+  box-shadow: 36px 35px 0px 8px #F29E23;
 }
 
 .lead_speak1 {
@@ -60,4 +60,20 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+}
+
+.default_animate {
+  animation: slide-down-fade-in 0.7s ease;
+}
+
+@keyframes slide-down-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

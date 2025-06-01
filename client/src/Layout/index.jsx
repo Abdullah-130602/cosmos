@@ -5,7 +5,9 @@ import Footer from "./Footer";
 const index = ({ children }) => {
   return (
     <div>
-      <Navbar />
+      <div className="sticky top-0 z-[99999]">
+        <Navbar />
+      </div>
       {children}
       <Footer />
     </div>
