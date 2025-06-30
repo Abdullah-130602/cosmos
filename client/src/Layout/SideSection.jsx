@@ -1,11 +1,12 @@
 import React from "react";
 import cur_issue from "../assets/cur_issue.png";
 import pre_issue from "../assets/pre_issue.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLayout } from "../Context/LayoutContext";
 
-const SideSection = () => {
+const SideSection = ({ buttonColor }) => {
   const { currentUrl } = useLayout();
+  const navigate = useNavigate();
 
   return (
     <div className="w-full lg:w-[33%] lg:border-l lg:p-4">
@@ -14,14 +15,26 @@ const SideSection = () => {
         {currentUrl === "/submit-article" ? (
           false
         ) : (
-          <button className="bg-[#F29E23] p-2 w-full text-white font-semibold text-lg transition-all duration-500 hover:scale-105 ease-out">
+          <button
+            className="bg-[#F29E23] p-2 w-full text-white font-semibold text-lg transition-all duration-500 ease-out"
+            onClick={() => navigate("/submit-article")}
+          >
             Submit Article
           </button>
         )}
         {/* Hardcopy */}
-        <button className="bg-[#F29E23] p-2 w-full text-white font-semibold text-lg transition-all duration-500 hover:scale-105 ease-out">
-          Apply For Hardcopy
-        </button>
+        {currentUrl === "/apply-hardcopy" ? (
+          false
+        ) : (
+          <button
+            className={`${
+              buttonColor === "#19467E" ? "bg-[#19467E]" : "bg-[#F29E23]"
+            } p-2 w-full text-white font-semibold text-lg transition-all duration-500 ease-out`}
+            onClick={() => navigate("/apply-hardcopy")}
+          >
+            Apply For Hardcopy
+          </button>
+        )}
         {/* Email For Info */}
         <div>
           <h1 className="font-semibold">

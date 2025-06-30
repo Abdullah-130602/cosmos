@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Banner from "./Banner";
 import Container from "../../Layout/Container";
 import { Link } from "react-router-dom";
@@ -13,8 +13,13 @@ import {
 import { CgArrowsExpandUpRight } from "react-icons/cg";
 import cover_page from "../../assets/COSMOS_COVER.png";
 import SideSection from "../../Layout/SideSection";
+import { useAuth } from "../../Context/AuthContext";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const whyChoose = [
     {
       icon: <MdOutlineLibraryBooks size={20} color="#fff" />,
@@ -64,34 +69,32 @@ const index = () => {
           </h1>
           <div className="flex flex-col gap-3 mt-5 text-xs xl:text-sm">
             <p className="text-justify">
-              The COSMOS is a prestigious, peer-reviewed, open-access
-              international journal dedicated to the advancement and
-              dissemination of scientific knowledge across a wide range of
-              disciplines. COSMOS provides a dynamic platform for researchers,
-              academicians, and professionals to publish high-quality original
-              research articles, comprehensive review papers, insightful case
-              reports, brief communications, and scholarly correspondences.
+              COSMOS is the official peer-reviewed academic journal of M.C.E
+              Society's Abeda Inamdar Senior College of Arts, Science and
+              Commerce (Autonomous), Pune, dedicated to promoting high-quality
+              research and scholarly exchange across diverse disciplines in
+              commerce and management. Our journal provides a vibrant platform
+              for academicians, researchers, and students to publish original,
+              thought-provoking, and impactful work.
             </p>
             <p className="text-justify">
-              The journal follows a rigorous peer-review process to ensure the
-              integrity and academic quality of every submission. With a
-              commitment to rapid and regular monthly publication, COSMOS aims
-              to make cutting-edge research accessible to a global audience
-              without delay.
+              At COSMOS, we believe in fostering a culture of inquiry,
+              innovation, and intellectual collaboration. Each submission
+              undergoes a rigorous peer-review process to ensure academic
+              integrity and relevance. We publish research articles, review
+              papers, case studies, and theoretical explorations that contribute
+              to knowledge advancement and address contemporary academic and
+              societal issues.
             </p>
             <p className="text-justify">
-              All articles published in COSMOS are assigned a unique Digital
-              Object Identifier (DOI), ensuring each publication is easily
-              citable and permanently accessible. The journal's metadata is
-              registered with CrossRef and is automatically indexed by Google
-              Scholar, enhancing the visibility and discoverability of authors'
-              work. For a complete list of our indexing partners and databases,
-              please refer to the journal’s indexing section.
+              Since its inception, Cosmos has played a significant role in the
+              dissemination of knowledge grounded in scholarly research, as well
+              as in shaping the content and boundaries of the discipline.
             </p>
             <p className="text-justify">
-              COSMOS welcomes contributions from all fields of science,
-              technology, medicine, humanities, and social sciences, encouraging
-              interdisciplinary research and global academic collaboration.
+              Whether you are a contributor, reviewer, or reader, we invite you
+              to explore our latest issues, discover emerging ideas, and engage
+              with a community committed to academic excellence.
             </p>
           </div>
         </div>

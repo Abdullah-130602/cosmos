@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../assets/Logo.png";
-import { useLayout } from "../Context/LayoutContext";
+import Logo from "../../assets/Logo.png";
+import { useLayout } from "../../Context/LayoutContext";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { Drawer } from "antd";
+import SideDrawer from "./SideDrawer";
+import { useAuth } from "../../Context/AuthContext";
+import { FaUser } from "react-icons/fa";
+import { ConfigProvider, Dropdown } from "antd";
+import { MdLogout } from "react-icons/md";
 
 const Navbar = () => {
   let { currentUrl } = useLayout();
   const navigate = useNavigate();
+
+  const userData =
+    localStorage?.getItem("token") &&
+    JSON.parse(localStorage?.getItem("token"));
+  const { isLogin, logout } = useAuth();
+
+  // Drawer
   const [open, setOpen] = useState(false);
   const showDrawer = () => {
     setOpen(true);
@@ -16,9 +27,24 @@ const Navbar = () => {
     setOpen(false);
   };
 
+  const items = [
+    {
+      key: "4",
+      danger: true,
+      label: (
+        <button
+          className="font-medium flex items-center gap-1"
+          onClick={logout}
+        >
+          <MdLogout />
+          Logout
+        </button>
+      ),
+    },
+  ];
+
   return (
     <>
-      {/* {console.log(currentUrl)} */}
       <nav className="bg-white border-gray-200 px-3 xl:px-0">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-0">
           <Link to="/" className="flex items-end space-x-2">
@@ -42,12 +68,45 @@ const Navbar = () => {
                 (+91) 12345 67890
               </Link>
             </div>
-            <Link
-              to="/login"
-              className="text-sm font-semibold bg-[#F29E23] py-2 px-4 text-white hover:scale-105"
-            >
-              Login
-            </Link>
+            {isLogin === true ? (
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Dropdown: {
+                      zIndexPopup: 99999,
+                    },
+                  },
+                }}
+              >
+                <Dropdown menu={{ items }} className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-[#F29E23] w-10 h-10 flex justify-center items-center rounded-full">
+                      <p className="text-2xl font-semibold text-white">
+                        {userData?.user?.name?.slice(0, 1)}
+                      </p>
+                    </div>
+                    <div>
+                      <h1 className="text-xs font-medium">
+                        {userData?.user?.name}
+                      </h1>
+                      <div className="flex items-center gap-1">
+                        <FaUser size={12} className="text-gray-400" />
+                        <p className="text-xs text-gray-400">
+                          {userData?.user?.user_type}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Dropdown>
+              </ConfigProvider>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className="text-sm font-semibold bg-[#F29E23] py-2 px-4 text-white hover:scale-105"
+              >
+                Login
+              </button>
+            )}
             <button
               onClick={open === true ? onClose : showDrawer}
               className="block lg:hidden"
@@ -138,111 +197,12 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      <Drawer
-        title="Basic Drawer"
-        closable={{ "aria-label": "Close Button" }}
+      <SideDrawer
         onClose={onClose}
+        currentUrl={currentUrl}
         open={open}
-      >
-        <ul className="flex flex-col gap-2 text-sm my-5">
-          <button
-            onClick={() => {
-              navigate("/");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Home
-          </button>
-          <button
-            onClick={() => {
-              navigate("/editorial-leadership");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/editorial-leadership" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Editorial Leadership
-          </button>
-          <button
-            onClick={() => {
-              navigate("/submit-article");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/submit-article" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Submit Article
-          </button>
-          <button
-            onClick={() => {
-              navigate("/issues");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/issues" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Issues
-          </button>
-          {/* <Link
-                to="/downloads"
-                className={`text-gray-900 ${
-                  currentUrl === "/downloads" && "bg-[#F29E23]"
-                } py-2 px-2 text-white`}
-              >
-                Downloads
-              </Link> */}
-          <button
-            onClick={() => {
-              navigate("/apply-hardcopy");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/apply-hardcopy" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Apply hardcopy
-          </button>
-          <button
-            onClick={() => {
-              navigate("/about-journal");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/about-journal" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            About the journal
-          </button>
-          <button
-            onClick={() => {
-              navigate("/policies-of-journal");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/policies-of-journal" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Policies of journal
-          </button>
-          <button
-            onClick={() => {
-              navigate("/contact-us");
-              onClose();
-            }}
-            className={`text-gray-900 ${
-              currentUrl === "/contact-us" && "bg-[#F29E23] text-white"
-            } py-2 px-2`}
-          >
-            Contact Us
-          </button>
-        </ul>
-      </Drawer>
+        navigate={navigate}
+      />
     </>
   );
 };

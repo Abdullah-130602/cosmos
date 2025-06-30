@@ -5,14 +5,21 @@ import { ConfigProvider, Divider, Menu } from "antd";
 import { useEffect, useState } from "react";
 import PageToShow from "./PageToShow";
 import { FaRegHandPointRight } from "react-icons/fa";
+import ReviewPolicy from "./ReviewPolicy";
+import PublicationPolicy from "./PublicationPolicy";
+import CancellationPolicy from "./CancellationPolicy";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const items = [
     {
       key: "1",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Aims And Scope
+          Review Policy
         </p>
       ),
       icon: <FaRegHandPointRight size={15} />,
@@ -21,7 +28,7 @@ const index = () => {
       key: "2",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Instruction To Authors
+          Publication Policy
         </p>
       ),
       icon: <FaRegHandPointRight size={15} />,
@@ -30,43 +37,7 @@ const index = () => {
       key: "3",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          How To Submit Paper
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "4",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Copyright Form
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "5",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Licensing And Usage Term
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "6",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Publishing Cost And Discount
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "7",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Academic And Institutional Subscription
+          Cancellation Policy
         </p>
       ),
       icon: <FaRegHandPointRight size={15} />,
@@ -79,7 +50,7 @@ const index = () => {
       label: (
         <h1 className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaRegHandPointRight size={12} />
-          Aims And Scope
+          Review Policy
         </h1>
       ),
     },
@@ -88,7 +59,7 @@ const index = () => {
       label: (
         <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaRegHandPointRight size={12} />
-          Instruction To Authors
+          Publication Policy
         </p>
       ),
     },
@@ -97,45 +68,9 @@ const index = () => {
       label: (
         <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaRegHandPointRight size={12} />
-          How To Submit Paper
+          Cancellation Policy
         </p>
       ),
-    },
-    {
-      key: "4",
-      label: (
-        <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
-          <FaRegHandPointRight size={12} />
-          Copyright Form
-        </p>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Licensing And Usage Term
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "6",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Publishing Cost And Discount
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
-    },
-    {
-      key: "7",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Academic And Institutional Subscription
-        </p>
-      ),
-      icon: <FaRegHandPointRight size={15} />,
     },
   ];
 
@@ -149,26 +84,14 @@ const index = () => {
 
   switch (currentPage) {
     case "1":
-      pageToShow = <PageToShow head="Aims And Scope" />;
+      pageToShow = <ReviewPolicy head="Policies Of Review" />;
       break;
     case "2":
-      pageToShow = <PageToShow head="Instruction To Authors" />;
+      pageToShow = <PublicationPolicy head="Policies Of Publication" />;
       break;
     case "3":
-      pageToShow = <PageToShow head="How To Submit Paper" />;
-      break;
-    case "4":
-      pageToShow = <PageToShow head="Copyright Form" />;
-      break;
-    case "5":
-      pageToShow = <PageToShow head="Licensing And Usage Term" />;
-      break;
-    case "6":
-      pageToShow = <PageToShow head="Publishing Cost And Discount" />;
-      break;
-    case "7":
       pageToShow = (
-        <PageToShow head="Academic And Institutional Subscription" />
+        <CancellationPolicy head="Cancellation and Withdrawal Policy" />
       );
       break;
     default:

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Container from "../../Layout/Container";
 import SideSection from "../../Layout/SideSection";
 import { Divider } from "antd";
@@ -7,6 +7,10 @@ import { FaCalendar, FaDownload, FaUserPen } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Container>
       <div className="flex flex-col lg:flex-row gap-2 mt-5">

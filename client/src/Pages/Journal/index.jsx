@@ -5,8 +5,18 @@ import { ConfigProvider, Divider, Menu } from "antd";
 import { useEffect, useState } from "react";
 import PageToShow from "./PageToShow";
 import { FaRegHandPointRight } from "react-icons/fa";
+import AimsAndScope from "./AimsAndScope";
+import InstructionToAuthors from "./InstructionToAuthors";
+import HowToSubmitPaper from "./HowToSubmitPaper";
+import LicensingUsage from "./LicensingUsage";
+import CostAndDiscount from "./CostAndDiscount";
+import AcademicAndInstitutionalSubscription from "./AcademicAndInstitutionalSubscription";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const items = [
     {
       key: "1",
@@ -149,26 +159,26 @@ const index = () => {
 
   switch (currentPage) {
     case "1":
-      pageToShow = <PageToShow head="Aims And Scope" />;
+      pageToShow = <AimsAndScope head="Aims And Scope" />;
       break;
     case "2":
-      pageToShow = <PageToShow head="Instruction To Authors" />;
+      pageToShow = <InstructionToAuthors head="Instruction To Authors" />;
       break;
     case "3":
-      pageToShow = <PageToShow head="How To Submit Paper" />;
+      pageToShow = <HowToSubmitPaper head="How To Submit Paper" />;
       break;
     case "4":
       pageToShow = <PageToShow head="Copyright Form" />;
       break;
     case "5":
-      pageToShow = <PageToShow head="Licensing And Usage Term" />;
+      pageToShow = <LicensingUsage head="Licensing And Usage Term" />;
       break;
     case "6":
-      pageToShow = <PageToShow head="Publishing Cost And Discount" />;
+      pageToShow = <CostAndDiscount head="Publishing Cost And Discount" />;
       break;
     case "7":
       pageToShow = (
-        <PageToShow head="Academic And Institutional Subscription" />
+        <AcademicAndInstitutionalSubscription head="Academic And Institutional Subscription" />
       );
       break;
     default:

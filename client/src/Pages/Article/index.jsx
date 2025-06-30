@@ -1,34 +1,155 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import SideSection from "../../Layout/SideSection";
 import Container from "../../Layout/Container";
 import Banner from "../Home/Banner";
 import { InboxOutlined } from "@ant-design/icons";
-import { message, Upload } from "antd";
+import { message, Spin, Upload } from "antd";
 const { Dragger } = Upload;
+import { useAuth } from "../../Context/AuthContext";
+import Swal from "sweetalert2";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  const { userToken } = useAuth();
+
+  // Utils
+  const [InputError, setInputError] = useState("");
+  const [Load, setLoad] = useState("");
+
+  const [file, setFile] = useState(null);
+
   const props = {
     name: "file",
     multiple: false,
-    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    beforeUpload(file) {
+      setFile(file); // Save to state
+      return false; // Prevent automatic upload
+    },
     onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+      console.log("Selected file:", info.file);
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
     },
   };
 
+  const [title, setTitle] = useState("");
+  const [abstract, setAbstract] = useState("");
+  const [authors, setAuthors] = useState("");
+  const [name, setName] = useState(userToken?.user?.name);
+  const [affiliation, setAffiliation] = useState("");
+  const [email, setEmail] = useState(userToken?.user?.email);
+  const [altEmail, setAltEmail] = useState("");
+  const [contact, setContact] = useState("");
+
+  // Email Validator
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+
+  // Contact Validator
+  const validatePhone = (number) => {
+    const regex = /^\d{10}$/;
+    return regex.test(number);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (title === "") {
+      Swal.fire({ text: "Manuscript title is required", icon: "error" });
+    } else if (authors === "") {
+      Swal.fire({ text: "Atleast one author name is required", icon: "error" });
+    } else if (abstract === "" || abstract.length < 30) {
+      Swal.fire({
+        text: "Abstract should be at least 30 charachters long",
+        icon: "error",
+      });
+    } else if (!file) {
+      Swal.fire({ text: "Upload research paper document", icon: "error" });
+      setLoad(false);
+      return;
+    } else if (name === "") {
+      Swal.fire({ text: "Name is required", icon: "error" });
+    } else if (affiliation === "") {
+      Swal.fire({ text: "Enter your affiliation", icon: "error" });
+    } else if (email === "") {
+      Swal.fire({ text: "Enter your email", icon: "error" });
+    } else if (!validateEmail(email)) {
+      Swal.fire({ text: "Invalid email", icon: "error" });
+    } else if (altEmail !== "" && !validateEmail(altEmail)) {
+      Swal.fire({ text: "Invalid alternate email", icon: "error" });
+    } else if (contact === "") {
+      Swal.fire({ text: "Enter your contact number", icon: "error" });
+    } else if (!validatePhone(contact)) {
+      Swal.fire({
+        text: "Contact number should be 10 digits only",
+        icon: "error",
+      });
+    } else {
+      setLoad(true);
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${userToken.token}`);
+
+      const formdata = new FormData();
+      formdata.append("title", title);
+      formdata.append("authors", authors);
+      formdata.append("abstract", abstract);
+      formdata.append("upload_file", file);
+      formdata.append("corresponding_author", name);
+      formdata.append("corresponding_author_affiliation", affiliation);
+      formdata.append("corresponding_author_email", email);
+      formdata.append("corresponding_author_alternate_email", altEmail);
+      formdata.append("corresponding_author_mobile_no", contact);
+
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: formdata,
+        redirect: "follow",
+      };
+
+      fetch(
+        `${import.meta.env.VITE_BASE_URL}api/articles/submit`,
+        requestOptions
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+          if (result.message === "Article submitted successfully") {
+            Swal.fire({
+              title: "Done!",
+              text: "Research paper submitted successfully!",
+              icon: "success",
+            });
+            setLoad(false);
+            setTitle("");
+            setAffiliation("");
+            setEmail("");
+            setAltEmail("");
+            setContact("");
+            setAuthors("");
+            setAbstract("");
+          } else {
+            setLoad(false);
+            Swal.fire({
+              title: "Failed!",
+              text: "Something went wrong!",
+              icon: "error",
+            });
+          }
+        })
+        .catch((error) => console.error(error));
+    }
+  };
+
   return (
     <>
+      {/* {console.log(authors)} */}
       <Banner />
       <Container>
         <div className="flex flex-col lg:flex-row gap-2 mt-5">
@@ -55,12 +176,14 @@ const index = () => {
                     id="manuscript"
                     placeholder="manuscript title..."
                     className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
                 {/* authors_name */}
                 <div className="space-y-2">
                   <label htmlFor="authors_name" className="text-sm font-medium">
-                    Author(s) Name<span className="text-red-500">*</span> :
+                    Author(s) Names<span className="text-red-500">*</span> :
                   </label>
                   <input
                     type="text"
@@ -68,7 +191,12 @@ const index = () => {
                     id="authors_name"
                     placeholder="author's name..."
                     className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                    value={authors}
+                    onChange={(e) => setAuthors(e.target.value)}
                   />
+                  <span className="text-xs text-gray-400 m-1">
+                    Authors name should be comma (,) separated
+                  </span>
                 </div>
                 {/* Abstract */}
                 <div className="space-y-2">
@@ -81,6 +209,8 @@ const index = () => {
                     rows={3}
                     placeholder="abstract details..."
                     className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                    value={abstract}
+                    onChange={(e) => setAbstract(e.target.value)}
                   />
                 </div>
                 {/* Upload */}
@@ -120,6 +250,8 @@ const index = () => {
                       id="name"
                       placeholder="enter your name..."
                       className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </div>
                   {/* affiliation */}
@@ -136,6 +268,8 @@ const index = () => {
                       id="affiliation"
                       placeholder="enter affiliation..."
                       className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                      value={affiliation}
+                      onChange={(e) => setAffiliation(e.target.value)}
                     />
                   </div>
                 </div>
@@ -151,6 +285,8 @@ const index = () => {
                       id="email"
                       placeholder="abc@xyz.com"
                       className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                     <span className="text-xs text-green-600">
                       We will inform you on above email address, when your
@@ -163,7 +299,7 @@ const index = () => {
                       htmlFor="alternate_email"
                       className="text-sm font-medium"
                     >
-                      Alternate Email<span className="text-red-500">*</span> :
+                      Alternate Email :
                     </label>
                     <input
                       type="email"
@@ -171,6 +307,8 @@ const index = () => {
                       id="alternate_email"
                       placeholder="abc@xyz.com"
                       className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                      value={altEmail}
+                      onChange={(e) => setAltEmail(e.target.value)}
                     />
                   </div>
                 </div>
@@ -185,15 +323,27 @@ const index = () => {
                     id="contact_no"
                     placeholder="12345-67890"
                     className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                    value={contact}
+                    onChange={(e) => setContact(e.target.value)}
                   />
                 </div>
-                <button className="bg-[#F29E23] p-2 w-full text-white font-semibold text-lg transition-all duration-500 hover:scale-105 ease-out">
-                  Submit Article
+                <button
+                  className="bg-[#F29E23] p-2 w-full text-white font-semibold text-lg transition-all duration-500"
+                  onClick={handleSubmit}
+                >
+                  {Load ? (
+                    <Spin
+                      indicator={<LoadingOutlined spin />}
+                      className="text-white"
+                    />
+                  ) : (
+                    "Submit Article"
+                  )}
                 </button>
               </div>
             </form>
           </div>
-          <SideSection />
+          <SideSection buttonColor={"#19467E"} />
         </div>
       </Container>
     </>

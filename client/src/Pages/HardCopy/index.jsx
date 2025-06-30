@@ -1,17 +1,93 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Banner from "../Home/Banner";
 import Container from "../../Layout/Container";
-import {
-  LoadingOutlined,
-  SmileOutlined,
-  SolutionOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { ConfigProvider, Button, message, Steps, theme, Divider } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import { ConfigProvider, Steps, theme, Divider, Spin } from "antd";
 import { MdOutlineLibraryBooks } from "react-icons/md";
 import SideSection from "../../Layout/SideSection";
+import { useAuth } from "../../Context/AuthContext";
+import Swal from "sweetalert2";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  const { userToken } = useAuth();
+
+  // Email Validator
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+  // Utils
+  const [Load, setLoad] = useState("");
+  const [InputError, setInputError] = useState("");
+
+  const [Manuscript, setManuscript] = useState("");
+  const [Email, setEmail] = useState(userToken?.user?.email);
+  const [Address, setAddress] = useState("");
+  const [Area, setArea] = useState("");
+  const [City, setCity] = useState("");
+  const [State, setState] = useState("");
+  const [Pincode, setPincode] = useState("");
+
+  const handleSubmit = () => {
+    setLoad(true);
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("Authorization", `"Bearer ${userToken.token}`);
+
+    const raw = JSON.stringify({
+      manuscript_no: Manuscript,
+      email: Email,
+      address: Address,
+      area: Area,
+      city: City,
+      state: State,
+      pincode: Pincode,
+    });
+
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    fetch(
+      `${import.meta.env.VITE_BASE_URL}api/hard-copy-request`,
+      requestOptions
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        if (result.status === "success") {
+          Swal.fire({
+            title: "Done!",
+            text: "Your request for hardcopy has been sent!",
+            icon: "success",
+          });
+          setAddress("");
+          setManuscript("");
+          setEmail("");
+          setArea("");
+          setState("");
+          setCity("");
+          setPincode("");
+          setLoad(false);
+          setCurrent(0);
+        } else {
+          setLoad(false);
+          Swal.fire({
+            title: "Failed!",
+            text: "Something went wrong!",
+            icon: "error",
+          });
+        }
+      })
+      .catch((error) => console.error(error));
+  };
+
   const steps = [
     {
       title: <p className="font-medium text-sm mt-1">Article Details</p>,
@@ -29,6 +105,8 @@ const index = () => {
               id="Manuscript"
               placeholder="Enter Manuscript No."
               className="text-sm p-2.5 font-medium bg-slate-50 text-gray-400 outline-none border w-full"
+              value={Manuscript}
+              onChange={(e) => setManuscript(e.target.value)}
             />
           </div>
           {/* Email */}
@@ -42,8 +120,15 @@ const index = () => {
               id="email"
               placeholder="abc@xyz.com"
               className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+              value={Email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
+          {InputError && (
+            <p className="text-xs text-red-500 font-semibold m-2 default_animate">
+              {InputError}
+            </p>
+          )}
         </div>
       ),
     },
@@ -62,13 +147,15 @@ const index = () => {
               id="address"
               placeholder="enter address..."
               className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+              value={Address}
+              onChange={(e) => setAddress(e.target.value)}
             />
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {/* Area */}
             <div>
               <label htmlFor="area" className="text-sm font-medium">
-                Area<span className="text-red-500">*</span> :
+                Area :
               </label>
               <input
                 type="text"
@@ -76,6 +163,8 @@ const index = () => {
                 id="area"
                 placeholder="Enter area..."
                 className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                value={Area}
+                onChange={(e) => setArea(e.target.value)}
               />
             </div>
             {/* City */}
@@ -89,6 +178,8 @@ const index = () => {
                 id="city"
                 placeholder="enter city name..."
                 className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                value={City}
+                onChange={(e) => setCity(e.target.value)}
               />
             </div>
           </div>
@@ -96,7 +187,7 @@ const index = () => {
             {/* State */}
             <div>
               <label htmlFor="state" className="text-sm font-medium">
-                State<span className="text-red-500">*</span> :
+                State :
               </label>
               <input
                 type="text"
@@ -104,6 +195,8 @@ const index = () => {
                 id="state"
                 placeholder="Enter state..."
                 className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                value={State}
+                onChange={(e) => setState(e.target.value)}
               />
             </div>
             {/* Pincode */}
@@ -117,9 +210,16 @@ const index = () => {
                 id="pincode"
                 placeholder="enter pincode..."
                 className="text-sm p-2.5 font-medium bg-slate-50 text-gray-800 outline-none border w-full"
+                value={Pincode}
+                onChange={(e) => setPincode(e.target.value)}
               />
             </div>
           </div>
+          {InputError && (
+            <p className="text-xs text-red-500 font-semibold m-2 default_animate">
+              {InputError}
+            </p>
+          )}
         </div>
       ),
     },
@@ -129,40 +229,37 @@ const index = () => {
         <div className="my-10 default_animate space-y-5 grid grid-cols-1 lg:grid-cols-2 gap-3">
           <div>
             <h1 className="text-sm font-medium">Manuscript ID:</h1>
-            <p className="text-sm text-gray-400">COS-541</p>
+            <p className="text-sm text-gray-400">{Manuscript}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">Email:</h1>
-            <p className="text-sm text-gray-400">abd@yahoo.com</p>
+            <p className="text-sm text-gray-400">{Email}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">Address:</h1>
-            <p className="text-sm text-gray-400">
-              Lane 42, Near ABC Chowk, Hill Garden
-            </p>
+            <p className="text-sm text-gray-400">{Address}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">Area:</h1>
-            <p className="text-sm text-gray-400">Near Downtown Hall</p>
+            <p className="text-sm text-gray-400">{Area ? Area : "N/A"}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">City:</h1>
-            <p className="text-sm text-gray-400">Leicester City</p>
+            <p className="text-sm text-gray-400">{City}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">State:</h1>
-            <p className="text-sm text-gray-400">London</p>
+            <p className="text-sm text-gray-400">{State ? State : "N/A"}</p>
           </div>
           <div>
             <h1 className="text-sm font-medium">Pincode:</h1>
-            <p className="text-sm text-gray-400">415605</p>
+            <p className="text-sm text-gray-400">{Pincode}</p>
           </div>
         </div>
       ),
     },
   ];
 
-  const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
   const next = () => {
     setCurrent(current + 1);
@@ -200,7 +297,24 @@ const index = () => {
                 {current < steps.length - 1 && (
                   <button
                     className="bg-[#F29E23] p-2 px-8 text-white font-semibold text-sm transition-all duration-500 hover:scale-105 ease-out"
-                    onClick={() => next()}
+                    onClick={() => {
+                      if (current === 0 && Manuscript === "") {
+                        setInputError("Manuscript No. is required");
+                      } else if (current === 0 && Email === "") {
+                        setInputError("Email is required");
+                      } else if (current === 0 && !validateEmail(Email)) {
+                        setInputError("Invalid email address");
+                      } else if (current === 1 && Address === "") {
+                        setInputError("Enter your address");
+                      } else if (current === 1 && City === "") {
+                        setInputError("Enter your city");
+                      } else if (current === 1 && Pincode === "") {
+                        setInputError("Enter your pincode");
+                      } else {
+                        setInputError("");
+                        next();
+                      }
+                    }}
                   >
                     Next
                   </button>
@@ -208,15 +322,22 @@ const index = () => {
                 {current === steps.length - 1 && (
                   <button
                     className="bg-[#F29E23] p-2 px-8 text-white font-semibold text-sm transition-all duration-500 hover:scale-105 ease-out"
-                    onClick={() => message.success("Processing complete!")}
+                    onClick={handleSubmit}
                   >
-                    Done
+                    {Load ? (
+                      <Spin
+                        indicator={<LoadingOutlined spin />}
+                        className="text-white"
+                      />
+                    ) : (
+                      "Done"
+                    )}
                   </button>
                 )}
               </div>
             </ConfigProvider>
           </div>
-          <SideSection />
+          <SideSection buttonColor={"#19467E"} />
         </div>
       </Container>
     </div>

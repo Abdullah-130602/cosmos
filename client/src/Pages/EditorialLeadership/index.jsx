@@ -5,14 +5,21 @@ import { ConfigProvider, Divider, Menu } from "antd";
 import { useEffect, useState } from "react";
 import PageToShow from "./PageToShow";
 import { FaUser } from "react-icons/fa";
+import ChiefEditor from "./ChiefEditor";
+import EditorialBoard from "./EditorialBoard";
+import ManagingEditor from "./ManagingEditor";
 
 const index = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const items = [
     {
       key: "1",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Executive Editors
+          Chief Editor
         </p>
       ),
       icon: <FaUser size={15} />,
@@ -21,7 +28,7 @@ const index = () => {
       key: "2",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Editorial Secretory
+          Managing Editor
         </p>
       ),
       icon: <FaUser size={15} />,
@@ -30,16 +37,7 @@ const index = () => {
       key: "3",
       label: (
         <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Advisory Board Members
-        </p>
-      ),
-      icon: <FaUser size={15} />,
-    },
-    {
-      key: "4",
-      label: (
-        <p className="capitalize md:uppercase font-medium text-xs md:text-sm">
-          Assistent Reviewers
+          Editorial Board Members
         </p>
       ),
       icon: <FaUser size={15} />,
@@ -52,7 +50,7 @@ const index = () => {
       label: (
         <h1 className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaUser size={12} />
-          Executive Editors
+          Chief Editor
         </h1>
       ),
     },
@@ -61,7 +59,7 @@ const index = () => {
       label: (
         <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaUser size={12} />
-          Editorial Secretory
+          Managing Editor
         </p>
       ),
     },
@@ -70,16 +68,7 @@ const index = () => {
       label: (
         <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
           <FaUser size={12} />
-          Advisory Board Members
-        </p>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <p className="flex items-center gap-1 capitalize md:uppercase font-medium">
-          <FaUser size={12} />
-          Assistent Reviewers
+          Editorial Board Members
         </p>
       ),
     },
@@ -95,16 +84,13 @@ const index = () => {
 
   switch (currentPage) {
     case "1":
-      pageToShow = <PageToShow head="Executive Editors" />;
+      pageToShow = <ChiefEditor head="Chief Editor" />;
       break;
     case "2":
-      pageToShow = <PageToShow head="Editorial Secratory" />;
+      pageToShow = <ManagingEditor head="Managing Editor" />;
       break;
     case "3":
-      pageToShow = <PageToShow head="Advisory Board Members" />;
-      break;
-    case "4":
-      pageToShow = <PageToShow head="Assistent Reviewers" />;
+      pageToShow = <EditorialBoard head="Editorial Board Members" />;
       break;
     default:
       break;
