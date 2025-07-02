@@ -15,6 +15,9 @@ import Login from "./Pages/Auth/Login";
 import { useLayout } from "./Context/LayoutContext";
 import Register from "./Pages/Auth/Register";
 import AuthLayout from "./Pages/Auth/AuthLayout";
+import ArticleDetails from "./Pages/Issues/ArticleDetails";
+import Archives from "./Pages/Issues/Archives";
+import RequestedIssues from "./Pages/Issues/RequestedIssues";
 
 function App() {
   const { currentUrl } = useLayout();
@@ -44,7 +47,14 @@ function App() {
               element={<PoliciesOfJournal />}
             />
             <Route exact path="/submit-article" element={<SubmitArticle />} />
-            <Route exact path="/issues" element={<Issues />} />
+            <Route
+              exact
+              path="/article-details/:id"
+              element={<ArticleDetails />}
+            />
+            <Route exact path="/current-issues" element={<Issues />} />
+            <Route exact path="/archives" element={<Archives />} />
+            <Route exact path="/articles/:month/:year" element={<RequestedIssues />} />
             <Route exact path="/downloads" element={<DownloadsOfAuthors />} />
             <Route
               exact

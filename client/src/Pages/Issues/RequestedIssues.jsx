@@ -2,13 +2,24 @@ import React, { useEffect, useState } from "react";
 import Container from "../../Layout/Container";
 import SideSection from "../../Layout/SideSection";
 import { Divider, Empty, Spin } from "antd";
-import { createSearchParams, Link, useNavigate } from "react-router-dom";
+import {
+  createSearchParams,
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { FaCalendar, FaDownload, FaUserPen } from "react-icons/fa6";
 import { FaEye } from "react-icons/fa";
 import { LoadingOutlined } from "@ant-design/icons";
 
-const index = () => {
+const RequestedIssues = () => {
   const navigate = useNavigate();
+  const { month } = useParams();
+  const { year } = useParams();
+
+  const [searchParams] = useSearchParams();
+  const month_name = searchParams.get("month");
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,7 +36,7 @@ const index = () => {
     };
 
     await fetch(
-      `${import.meta.env.VITE_BASE_URL}api/current-issue`,
+      `${import.meta.env.VITE_BASE_URL}api/volumes/${year}/month/${month}`,
       requestOptions
     )
       .then((response) => response.json())
@@ -48,6 +59,7 @@ const index = () => {
 
   return (
     <Container>
+      {console.log(month_name)}
       {Load ? (
         <div className="h-[47vh] flex justify-center items-center">
           <Spin
@@ -61,7 +73,7 @@ const index = () => {
           <div className="w-full lg:w-2/3 lg:pr-4">
             <div className="flex items-center justify-between">
               <h1 className="text-3xl lg:text-4xl font-semibold">
-                Current Issue
+                {month_name} {year}
               </h1>
               <div className="flex items-center gap-2">
                 <FaCalendar className="text-xl text-[#19467E]" />
@@ -152,4 +164,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default RequestedIssues;

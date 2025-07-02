@@ -8,16 +8,19 @@ const { Dragger } = Upload;
 import { useAuth } from "../../Context/AuthContext";
 import Swal from "sweetalert2";
 import { LoadingOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const index = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const { userToken } = useAuth();
+  const navigate = useNavigate();
+
+  const { userToken, isLogin } = useAuth();
 
   // Utils
-  const [InputError, setInputError] = useState("");
+  // const [InputError, setInputError] = useState("");
   const [Load, setLoad] = useState("");
 
   const [file, setFile] = useState(null);
@@ -60,7 +63,21 @@ const index = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title === "") {
+    if (!isLogin) {
+      Swal.fire({
+        title: "Kindly login to submit research paper",
+        // text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Login!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate("/login");
+        }
+      });
+    } else if (title === "") {
       Swal.fire({ text: "Manuscript title is required", icon: "error" });
     } else if (authors === "") {
       Swal.fire({ text: "Atleast one author name is required", icon: "error" });

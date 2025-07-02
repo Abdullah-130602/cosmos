@@ -8,6 +8,7 @@ import { useAuth } from "../../Context/AuthContext";
 import { FaUser } from "react-icons/fa";
 import { ConfigProvider, Dropdown } from "antd";
 import { MdLogout } from "react-icons/md";
+import { IoMdArrowDropdown } from "react-icons/io";
 
 const Navbar = () => {
   let { currentUrl } = useLayout();
@@ -29,7 +30,7 @@ const Navbar = () => {
 
   const items = [
     {
-      key: "4",
+      key: "1",
       danger: true,
       label: (
         <button
@@ -39,6 +40,34 @@ const Navbar = () => {
           <MdLogout />
           Logout
         </button>
+      ),
+    },
+  ];
+
+  const IssuesItems = [
+    {
+      key: "2",
+      label: (
+        <div className="font-medium p-1">
+          <Link
+            to="/current-issues"
+            className="flex items-center gap-1 text-sm"
+          >
+            <MdLogout />
+            Current Issue
+          </Link>
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div className="font-medium p-1">
+          <Link to="/archives" className="flex items-center gap-1 text-sm">
+            <MdLogout />
+            Archive
+          </Link>
+        </div>
       ),
     },
   ];
@@ -119,7 +148,7 @@ const Navbar = () => {
       <nav className="bg-[#19467E] hidden lg:block">
         <div className="max-w-screen-xl mx-auto">
           <div className="flex items-center">
-            <ul className="flex flex-row font-medium mt-0 space-x-14 text-sm">
+            <ul className="flex flex-row font-medium mt-0 space-x-12 text-sm">
               <Link
                 to="/"
                 className={`text-gray-900 hover:bg-[#F29E23] ${
@@ -145,14 +174,24 @@ const Navbar = () => {
               >
                 Submit Article
               </Link>
-              <Link
-                to="/issues"
+              <div
                 className={`text-gray-900 hover:bg-[#F29E23] ${
-                  currentUrl === "/issues" && "bg-[#F29E23]"
-                } py-2 px-2 text-white`}
+                  (currentUrl === "/issues" ||
+                    currentUrl === "/archives" ||
+                    currentUrl === "/current-issues") &&
+                  "bg-[#F29E23]"
+                } py-2 px-2 text-white flex items-center gap-1`}
               >
-                Issues
-              </Link>
+                <Dropdown
+                  menu={{ items: IssuesItems }}
+                  className="cursor-pointer"
+                >
+                  <span className="flex items-center gap-1">
+                    Issues
+                    <IoMdArrowDropdown className="text-white" />
+                  </span>
+                </Dropdown>
+              </div>
               {/* <Link
                 to="/downloads"
                 className={`text-gray-900 hover:bg-[#F29E23] ${
